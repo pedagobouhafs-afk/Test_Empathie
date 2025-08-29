@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test d'Empathie - Bac Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white shadow-lg rounded-2xl p-8 max-w-3xl w-full">
+    <h1 class="text-2xl font-bold text-center mb-6">Test de Compétence Psycho-Sociale : Empathie</h1>
+
+    <form id="testForm" class="space-y-6">
+      <div>
+        <label class="font-semibold">Nom du candidat :</label>
+        <input type="text" id="nomCandidat" required class="border rounded-lg px-3 py-2 w-full mt-1">
+      </div>
+
+      <!-- Questions -->
+      <div>
+        <p class="font-semibold">1. Votre camarade arrive en retard et semble essoufflé. Son visage est rouge et il évite le regard des autres. Que ressent-il probablement ?</p>
+        <label><input type="radio" name="q1" value="C"> Honte</label><br>
+        <label><input type="radio" name="q1" value="A"> Joie</label><br>
+        <label><input type="radio" name="q1" value="B"> Colère</label><br>
+        <label><input type="radio" name="q1" value="D"> Détente</label>
+      </div>
+
+      <div>
+        <p class="font-semibold">2. Une collègue de stage a le regard fixe, elle ne parle plus beaucoup alors qu’elle était très bavarde. Elle pourrait ressentir :</p>
+        <label><input type="radio" name="q2" value="B"> Tristesse</label><br>
+        <label><input type="radio" name="q2" value="A"> Enthousiasme</label><br>
+        <label><input type="radio" name="q2" value="C"> Colère</label><br>
+        <label><input type="radio" name="q2" value="D"> Fierté</label>
+      </div>
+
+      <div>
+        <p class="font-semibold">3. Quelqu’un éclate de rire après votre intervention orale, sans raison apparente. Que peut-il être utile de faire ?</p>
+        <label><input type="radio" name="q3" value="C"> Lui demander calmement pourquoi</label><br>
+        <label><input type="radio" name="q3" value="A"> Rire avec lui</label><br>
+        <label><input type="radio" name="q3" value="B"> L'ignorer</label><br>
+        <label><input type="radio" name="q3" value="D"> Le critiquer devant les autres</label>
+      </div>
+
+      <div>
+        <p class="font-semibold">4. En atelier, un camarade a raté sa démonstration et se fait corriger devant toute la classe. Quelle est la réaction la plus empathique ?</p>
+        <label><input type="radio" name="q4" value="C"> Lui proposer de retravailler ensemble après le cours</label><br>
+        <label><input type="radio" name="q4" value="A"> Se moquer doucement avec les autres</label><br>
+        <label><input type="radio" name="q4" value="B"> Ne rien dire</label><br>
+        <label><input type="radio" name="q4" value="D"> Dire que ça arrive à tout le monde</label>
+      </div>
+
+      <div>
+        <p class="font-semibold">5. Un client au téléphone semble nerveux et pressé. Vous devez lui demander des infos qu’il n’a pas encore données. Que faites-vous ?</p>
+        <label><input type="radio" name="q5" value="B"> Vous attendez qu’il finisse puis posez vos questions calmement</label><br>
+        <label><input type="radio" name="q5" value="A"> Vous l’interrompez poliment</label><br>
+        <label><input type="radio" name="q5" value="C"> Vous lui dites de se calmer</label><br>
+        <label><input type="radio" name="q5" value="D"> Vous lui dites que vous êtes aussi pressé</label>
+      </div>
+
+      <div>
+        <p class="font-semibold">6. Quand un ami me parle d’un problème, je me sens :</p>
+        <label><input type="radio" name="q6" value="A"> Concerné et à l’écoute</label><br>
+        <label><input type="radio" name="q6" value="B"> Peu intéressé</label><br>
+        <label><input type="radio" name="q6" value="C"> Stressé car je ne sais quoi dire</label><br>
+        <label><input type="radio" name="q6" value="D"> Ennuyé</label>
+      </div>
+
+      <div>
+        <p class="font-semibold">7. Lorsque je vois quelqu’un pleurer :</p>
+        <label><input type="radio" name="q7" value="A"> Je cherche à comprendre ce qui ne va pas</label><br>
+        <label><input type="radio" name="q7" value="B"> Je préfère m’éloigner</label><br>
+        <label><input type="radio" name="q7" value="C"> Je plaisante pour détendre</label><br>
+        <label><input type="radio" name="q7" value="D"> Je ne sais pas comment réagir</label>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold">Valider et Enregistrer le Score</button>
+    </form>
+
+    <div id="resultat" class="mt-6 text-center hidden"></div>
+
+    <h2 class="text-xl font-bold mt-10 mb-4">Résultats des candidats</h2>
+    <table class="w-full border border-gray-300 text-center">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border px-2 py-1">Nom</th>
+          <th class="border px-2 py-1">Score</th>
+        </tr>
+      </thead>
+      <tbody id="tableResultats"></tbody>
+    </table>
+
+    <div class="flex space-x-4 mt-4">
+      <button id="exportCSV" class="bg-green-600 text-white px-4 py-2 rounded-lg font-bold">Exporter en CSV</button>
+      <button id="exportPDF" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold">Exporter en PDF</button>
+    </div>
+  </div>
+
+  <script>
+    const bonnesReponses = {
+      q1: "C",
+      q2: "B",
+      q3: "C",
+      q4: "C",
+      q5: "B",
+      q6: "A",
+      q7: "A"
+    };
+
+    const resultats = [];
+
+    document.getElementById("testForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      let score = 0;
+      let total = Object.keys(bonnesReponses).length;
+
+      for (let q in bonnesReponses) {
+        let r = document.querySelector(`input[name="${q}"]:checked`);
+        if (r && r.value === bonnesReponses[q]) {
+          score++;
+        }
+      }
+
+      const nom = document.getElementById("nomCandidat").value.trim();
+      if (!nom) return;
+
+      document.getElementById("resultat").innerHTML = `<p class='text-xl font-bold'>${nom} a obtenu : ${score} / ${total}</p>`;
+      document.getElementById("resultat").classList.remove("hidden");
+
+      // Ajouter dans la liste et dans le tableau
+      resultats.push({ nom, score: `${score}/${total}` });
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td class='border px-2 py-1'>${nom}</td><td class='border px-2 py-1'>${score}/${total}</td>`;
+      document.getElementById("tableResultats").appendChild(tr);
+
+      // Réinitialiser le formulaire
+      document.getElementById("testForm").reset();
+    });
+
+    document.getElementById("exportCSV").addEventListener("click", function() {
+      if (resultats.length === 0) return;
+      let csvContent = "Nom,Score\n" + resultats.map(r => `${r.nom},${r.score}`).join("\n");
+      let blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      let link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "resultats_empathie.csv";
+      link.click();
+    });
+
+    document.getElementById("exportPDF").addEventListener("click", function() {
+      if (resultats.length === 0) return;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(16);
+      doc.text("Résultats du Test d'Empathie", 20, 20);
+
+      doc.setFontSize(12);
+      let y = 40;
+      resultats.forEach((r, i) => {
+        doc.text(`${i+1}. ${r.nom} : ${r.score}`, 20, y);
+        y += 10;
+      });
+
+      doc.save("resultats_empathie.pdf");
+    });
+  </script>
+</body>
+</html>
